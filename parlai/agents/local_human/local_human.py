@@ -13,9 +13,24 @@ from parlai.core.agents import Agent
 from parlai.core.message import Message
 from parlai.utils.misc import display_messages, load_cands
 from parlai.utils.strings import colorize
+import socket
 
+HOST = '127.0.0.1'
+PORT = 5000
+BUF_SIZE = 1024
+text_from_socket = ""
+text_to_socket = ""
 
-class LocalHumanAgent(Agent):
+def answer_server():
+    c = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    c.connect((HOST,PORT))
+    data = c.recv(BUF_SIZE)
+    text_from_socket = data.decode() #act에 input 대신에 넣어줌
+    c.sendall(text_to_socket)
+    
+    
+class LocalHumanAgent(Agent):    
+    
     def add_cmdline_args(argparser):
         """
         Add command-line arguments specifically for this agent.
@@ -52,19 +67,20 @@ class LocalHumanAgent(Agent):
         return self.finished
 
     def observe(self, msg):
-        print(
-            display_messages(
+        
+        msg = display_messages(
                 [msg],
                 ignore_fields=self.opt.get('display_ignore_fields', ''),
-                prettify=self.opt.get('display_prettify', False),
-            )
-        )
+                prettify=self.opt.get('display_prettify', False))
+        
+        text_to_socket = msg #디스플레이의 값을 전역변수에 저장
+        
 
     def act(self):
         reply = Message()
         reply['id'] = self.getID()
         try:
-            reply_text = input(colorize("Enter Your Message:", 'text') + ' ')
+            reply_text = text_from_socket
         except EOFError:
             self.finished = True
             return {'episode_done': True}
