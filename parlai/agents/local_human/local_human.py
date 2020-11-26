@@ -21,7 +21,7 @@ BUF_SIZE = 1024
 text_from_socket = ""
 text_to_socket = "" #observe에서 값 넣어줌 
 
-def answer_server():
+def answer_flask():
     c = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     c.connect((HOST,PORT))
     while True: #근데 여기서 반복하면 로컬휴먼 파일 자체가 여기서 바쁜대기중 아님??????????
