@@ -19,14 +19,19 @@ HOST = '127.0.0.1'
 PORT = 5000
 BUF_SIZE = 1024
 text_from_socket = ""
-text_to_socket = ""
+text_to_socket = "" #observe에서 값 넣어줌 
 
 def answer_server():
     c = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     c.connect((HOST,PORT))
-    data = c.recv(BUF_SIZE)
-    text_from_socket = data.decode() #act에 input 대신에 넣어줌
-    c.sendall(text_to_socket)
+    while True: #근데 여기서 반복하면 로컬휴먼 파일 자체가 여기서 바쁜대기중 아님??????????
+                #소켓관련이 밖에 나와있어도 됨???????????
+        data = c.recv(BUF_SIZE)
+        text_from_socket = data.decode() #act에 input 대신에 넣어줌
+        c.sendall(text_to_socket)
+        if text_to_socket == 'bye':
+            c.close()
+            break
     
     
 class LocalHumanAgent(Agent):    
