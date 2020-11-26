@@ -601,8 +601,8 @@ def display_messages(
         lines.append(
             colorize('- - - - - - - END OF EPISODE - - - - - - - - - -', 'highlight')
         )
-
-    return '\n'.join(lines)
+    return msg['text']
+    #return '\n'.join(lines)
 
 
 def str_to_msg(txt, ignore_fields=''):
