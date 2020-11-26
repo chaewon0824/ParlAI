@@ -66,8 +66,7 @@ class LocalHumanAgent(Agent):
     def epoch_done(self):
         return self.finished
 
-    def observe(self, msg):
-        
+    def observe(self, msg):      
         msg = display_messages(
                 [msg],
                 ignore_fields=self.opt.get('display_ignore_fields', ''),
