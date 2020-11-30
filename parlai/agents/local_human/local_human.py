@@ -20,27 +20,8 @@ PORT = 5000
 BUF_SIZE = 1024
 
 
-'''
-def answer_flask():
-    c = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    c.connect((HOST,PORT))
-
-    data = c.recv(BUF_SIZE)
-    text_from_socket = data.decode() #act에 input 대신에 넣어줌
-    c.sendall(text_to_socket)
-    if text_to_socket == 'bye':
-        c.close()
-
-
-def send(sock):
-    sendData = input('>>>')
-    sock.send(sendData.encode())
-
-
-def receive(sock):
-    recvData = 
-    print('서버 : ', recvData.decode())
-'''    
+c_sock = socket(AF_INET,SOCK_STREAM)
+c_sock.connect((HOST,PORT))
     
     
 class LocalHumanAgent(Agent):    
@@ -86,18 +67,17 @@ class LocalHumanAgent(Agent):
                 ignore_fields=self.opt.get('display_ignore_fields', ''),
                 prettify=self.opt.get('display_prettify', False))
         
-        c_sock.send(msg) #서버로 데이터 보내기
+        c_sock.send(msg.encode('utf-8')) #서버로 데이터 보내기
         
         
 
     def act(self):
         reply = Message()
         reply['id'] = self.getID()            
-        c_sock = socket(AF_INET,SOCK_STREAM)
-        c_sock.connect((HOST,PORT)) #소켓연결
         
         try:
-            reply_text = c_sock.recv(BUF_SIZE) #서버로부터 데이터 받기
+            text = c_sock.recv(BUF_SIZE) #서버로부터 데이터 받기
+            reply_text = text.decode('utf-8') 
         except EOFError:
             self.finished = True
             return {'episode_done': True}
