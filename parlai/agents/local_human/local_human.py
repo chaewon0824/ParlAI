@@ -13,14 +13,14 @@ from parlai.core.agents import Agent
 from parlai.core.message import Message
 from parlai.utils.misc import display_messages, load_cands
 from parlai.utils.strings import colorize
-import socket
+from socket import *
 
 HOST = '127.0.0.1'
 PORT = 5000
 BUF_SIZE = 1024
-text_from_socket = ""
-text_to_socket = "" #observe에서 값 넣어줌 
 
+
+'''
 def answer_flask():
     c = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     c.connect((HOST,PORT))
@@ -30,7 +30,18 @@ def answer_flask():
     c.sendall(text_to_socket)
     if text_to_socket == 'bye':
         c.close()
-        
+
+
+def send(sock):
+    sendData = input('>>>')
+    sock.send(sendData.encode())
+
+
+def receive(sock):
+    recvData = 
+    print('서버 : ', recvData.decode())
+'''    
+    
     
 class LocalHumanAgent(Agent):    
     
@@ -75,14 +86,18 @@ class LocalHumanAgent(Agent):
                 ignore_fields=self.opt.get('display_ignore_fields', ''),
                 prettify=self.opt.get('display_prettify', False))
         
-        text_to_socket = msg #디스플레이의 값을 전역변수에 저장
+        c_sock.send(msg) #서버로 데이터 보내기
+        
         
 
     def act(self):
         reply = Message()
-        reply['id'] = self.getID()
+        reply['id'] = self.getID()            
+        c_sock = socket(AF_INET,SOCK_STREAM)
+        c_sock.connect((HOST,PORT)) #소켓연결
+        
         try:
-            reply_text = text_from_socket
+            reply_text = c_sock.recv(BUF_SIZE) #서버로부터 데이터 받기
         except EOFError:
             self.finished = True
             return {'episode_done': True}
